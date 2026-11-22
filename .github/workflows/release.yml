@@ -53,7 +53,10 @@ jobs:
         run: ./gradlew --no-daemon :core:test :app:lintRelease :app:assembleRelease
       - name: Exigir versão estável e verificar assinatura
         run: |
-          ! grep -Eq 'versionName = ".*(test|debug|alpha|beta)' app/build.gradle.kts
+          if grep -Eq 'versionName = ".*(test|debug|alpha|beta)' app/build.gradle.kts; then
+            echo "A versão ainda está marcada como teste; publicação estável bloqueada." >&2
+            exit 1
+          fi
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose app/build/outputs/apk/release/app-release.apk
       - name: Preparar checksum
         run: |

@@ -9,7 +9,7 @@ import android.provider.DocumentsProvider
 import java.io.File
 import java.io.FileNotFoundException
 
-/** Private debug fixture only. Cannot access user-selected documents or external paths. */
+/** Validation-only fixture protected by the platform MANAGE_DOCUMENTS permission. Cannot access user-selected documents or external paths. */
 class FixtureDocumentsProvider : DocumentsProvider() {
     private val columns = arrayOf(Document.COLUMN_DOCUMENT_ID,Document.COLUMN_DISPLAY_NAME,Document.COLUMN_SIZE,
         Document.COLUMN_LAST_MODIFIED,Document.COLUMN_MIME_TYPE,Document.COLUMN_FLAGS)

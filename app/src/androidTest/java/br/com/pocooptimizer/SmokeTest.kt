@@ -18,11 +18,19 @@ class SmokeTest {
         val dir=File(compose.activity.filesDir,"screenshots").apply { mkdirs() }
         File(dir,"$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG,100,it) }
     }
+    @Test fun activityCanBeRecreatedWithoutLosingStartup() {
+        compose.onNodeWithText("POCO OPTIMIZER").assertIsDisplayed()
+        compose.activityRule.scenario.recreate()
+        compose.onNodeWithText("POCO OPTIMIZER").assertIsDisplayed()
+    }
     @Test fun navigationAndRealScanWithoutFolderPermission() {
         compose.onNodeWithText("POCO OPTIMIZER").assertIsDisplayed()
         screenshot("dashboard")
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText("ANALISAR DISPOSITIVO"))
         compose.onNodeWithText("ANALISAR DISPOSITIVO").performClick()
         compose.waitUntil(60000) { compose.onAllNodesWithText("Cancelar operação").fetchSemanticsNodes().isEmpty() }
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText("Relatório consolidado"))
+        compose.onNodeWithText("Relatório consolidado").assertIsDisplayed()
         compose.onNodeWithText("Limpeza",useUnmergedTree=true).performClick()
         compose.onNodeWithText("Autorizar pasta").assertIsDisplayed()
         screenshot("cleaner")

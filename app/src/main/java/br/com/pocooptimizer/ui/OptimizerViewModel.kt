@@ -28,11 +28,18 @@ class OptimizerViewModel(application: Application) : AndroidViewModel(applicatio
     val lastScan = repo.local.lastScan.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
     private var operation: Job? = null
     private var pendingAction: Pair<String, DeviceSnapshot?>? = null
-    init { refresh(); refreshRoots() }
-    private fun refreshRoots() { _state.update { it.copy(roots = repo.storage.roots().map(Uri::toString)) } }
+    init { refresh() }
+    private fun refreshRoots() {
+        try { _state.update { it.copy(roots = repo.storage.roots().map(Uri::toString)) } }
+        catch(e: Exception) {
+            _state.update { it.copy(roots = emptyList()) }
+            message("Não foi possível consultar os acessos a pastas: ${e.message}")
+        }
+    }
     fun refresh() { viewModelScope.launch(Dispatchers.IO) {
         try { val d = repo.device.snapshot(); _state.update { it.copy(device = d, performance = Analysis.performance(d)) } }
         catch(e: Exception) { message("Indicadores indisponíveis: ${e.message}") }
+        refreshRoots()
     } }
     private fun progress(stage: Int, text: String, done: Int = 0, total: Int? = null) {
         _state.update { it.copy(stage=stage,progress=text,done=done,total=total) }

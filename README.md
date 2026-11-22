@@ -1,12 +1,12 @@
 # Poco Optimizer
 
-Aplicativo **Android nativo** em Kotlin e Jetpack Compose/Material 3, inicialmente destinado ao Poco X6 5G com HyperOS. Sem root, anúncios, telemetria ou permissão de internet. **0.1.0 é versão de teste**, não um antivírus certificado nem um “RAM booster”. Não publicado na Play Store.
+Aplicativo **Android nativo** em Kotlin e Jetpack Compose/Material 3, inicialmente destinado ao Poco X6 5G com HyperOS. Sem root, anúncios, telemetria ou permissão de internet. **0.1.1 é versão de teste**, não um antivírus certificado nem um “RAM booster”. Não publicado na Play Store.
 
 ## Instalar o APK de teste
 
 1. Abra **Actions → Android APK → execução concluída → Artifacts → Poco-Optimizer-test-apk** e extraia o ZIP. Artefatos exigem login no GitHub e expiram em 30 dias.
 2. Quando houver pré-release, o APK e o SHA-256 também estarão em **Releases**. Não instale arquivos de outras fontes como se fossem oficiais.
-3. No Poco, abra `Poco-Optimizer-0.1.0-test.apk`. Se o HyperOS pedir, permita temporariamente “Instalar apps desconhecidos” **somente para o navegador/gerenciador usado**. Revogue essa permissão após instalar. Não é necessário desativar Play Protect.
+3. No Poco, abra `Poco-Optimizer-0.1.1-test.apk`. Se o HyperOS pedir, permita temporariamente “Instalar apps desconhecidos” **somente para o navegador/gerenciador usado**. Revogue essa permissão após instalar. Não é necessário desativar Play Protect.
 4. Abra o app, escolha **Limpeza → Autorizar pasta** e selecione uma subpasta com arquivos de teste. Android 11+ pode impedir acesso à raiz de Downloads e a Android/data/obb.
 5. Execute a análise e revise os relatórios. Para excluir, selecione arquivos, toque em revisar e confirme a lista nominal. Comece com cópias descartáveis.
 
@@ -30,7 +30,7 @@ Android Studio compatível com AGP 8.9.2, **JDK 21**, Android SDK 35/build-tools
 ```sh
 ./gradlew :core:test :app:lintDebug :app:assembleDebug
 # Emulador ou dispositivo conectado:
-./gradlew :app:connectedDebugAndroidTest
+./gradlew :app:connectedValidationAndroidTest
 # APK:
 # app/build/outputs/apk/debug/app-debug.apk
 ```
@@ -45,8 +45,10 @@ DataStore armazena preferências e histórico pequeno e limitado; Room não é n
 
 ## GitHub Actions e releases
 
-`android.yml` testa a lógica, roda Android Lint, compila os APKs e publica um artefato. Outro job roda testes instrumentados em emulador API 35. Uma pré-release só é publicada após os dois jobs passarem, por `workflow_dispatch` com `publish_test=true` ou tag `test-*`.
+`android.yml` testa a lógica, roda Android Lint, compila os APKs e publica um artefato. Jobs separados instalam e abrem o APK distribuído no Android 15/API 35 e Android 16/API 36, além de executar testes instrumentados na variante exclusiva validation. O artefato público só aparece após todos esses testes passarem; o artefato candidate-apk-not-validated é interno e não deve ser instalado. Uma pré-release só é publicada após os dois jobs passarem, por `workflow_dispatch` com `publish_test=true` ou tag `test-*`.
 
 `release.yml` é manual e exige declaração de teste físico, versão sem sufixo de teste e assinatura válida. Antes de usar, configure o environment **release-production com required reviewers** e os secrets `RELEASE_KEYSTORE_BASE64`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD`. O YAML sozinho não configura aprovadores no GitHub. Proteja main e exija os checks Android. Gere/guarde a chave definitiva fora do repositório, com backup seguro; nunca inclua senhas ou arquivos de chave em commits. Incremente versionCode/versionName ao distribuir atualizações.
+
+A versão 0.1.1 corrige o crash de inicialização causado por um provider de teste no APK debug. Veja [causa e correção](docs/STARTUP_FIX_0_1_1.md) e [como coletar um crash no Poco](docs/COLLECT_CRASH_LOG.md).
 
 Consulte [limitações e segurança](docs/ANDROID_LIMITS.md), [privacidade](docs/PRIVACY.md) e [plano de testes físicos](docs/TESTING.md). Uma compilação bem-sucedida não substitui teste no Poco real.

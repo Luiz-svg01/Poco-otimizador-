@@ -8,3 +8,5 @@ local.properties
 .env
 captures/
 .kotlin/
+__pycache__/
+*.pyc

@@ -4,8 +4,8 @@
 
 - JVM: classificação não destrutiva, datas desconhecidas, tamanhos e tipos, heurísticas sem ameaça confirmada, indicadores de desempenho, SHA-256 conhecido, bytes diferentes de mesmo tamanho, exclusão realmente efetuada em arquivos temporários, cópia preservada, cópia ausente, mutação de conteúdo, falha de provedor, plano expirado, seleção alheia e cancelamento de stream.
 - Android Lint: manifest, APIs mínimas, recursos e verificações estáticas.
-- Instrumentado: inicialização, análise sem pastas autorizadas, navegação e estados reais. Testes SAF adicionais exercitam ContentResolver e DocumentsContract em provedor de teste.
-- CI: compila APK debug, testes unitários, lint, emulador API 35, artefatos e pré-release após sucesso.
+- Instrumentado: inicialização, recriação da Activity, análise sem pastas autorizadas, navegação e estados reais. O APK debug distribuído também é instalado e aberto três vezes fora da instrumentação, com verificação de processo, análise e navegação Testes SAF adicionais exercitam ContentResolver e DocumentsContract em provedor de teste.
+- CI: compila APK debug, testes unitários, lint, emuladores API 35 e 36, artefatos e pré-release após sucesso.
 
 Resultados desta execução são documentados em VALIDATION.md. Não trate a existência de testes como prova de execução; consulte os relatórios e o status real no Actions.
 
