@@ -2,9 +2,11 @@
 
 Aplicativo **Android nativo** em Kotlin e Jetpack Compose/Material 3, inicialmente destinado ao Poco X6 5G com HyperOS. Sem root, anúncios, telemetria ou permissão de internet. **0.1.1 é versão de teste**, não um antivírus certificado nem um “RAM booster”. Não publicado na Play Store.
 
+[Baixar APK 0.1.1 de teste](https://github.com/Luiz-svg01/Poco-otimizador-/releases/download/test-45040746740/Poco-Optimizer-0.1.1-test.apk) · [CI aprovada](https://github.com/Luiz-svg01/Poco-otimizador-/actions/runs/45040746740) · [Resultados e limitações](docs/VALIDATION.md)
+
 ## Instalar o APK de teste
 
-1. Abra **Actions → Android APK → execução concluída → Artifacts → Poco-Optimizer-test-apk** e extraia o ZIP. Artefatos exigem login no GitHub e expiram em 30 dias.
+1. Abra **Actions → Android APK → execução concluída com sucesso → Artifacts → Poco-Optimizer-test-apk** e extraia o ZIP. Artefatos exigem login no GitHub e expiram em 30 dias.
 2. Quando houver pré-release, o APK e o SHA-256 também estarão em **Releases**. Não instale arquivos de outras fontes como se fossem oficiais.
 3. No Poco, abra `Poco-Optimizer-0.1.1-test.apk`. Se o HyperOS pedir, permita temporariamente “Instalar apps desconhecidos” **somente para o navegador/gerenciador usado**. Revogue essa permissão após instalar. Não é necessário desativar Play Protect.
 4. Abra o app, escolha **Limpeza → Autorizar pasta** e selecione uma subpasta com arquivos de teste. Android 11+ pode impedir acesso à raiz de Downloads e a Android/data/obb.
@@ -45,7 +47,7 @@ DataStore armazena preferências e histórico pequeno e limitado; Room não é n
 
 ## GitHub Actions e releases
 
-`android.yml` testa a lógica, roda Android Lint, compila os APKs e publica um artefato. Jobs separados instalam e abrem o APK distribuído no Android 15/API 35 e Android 16/API 36, além de executar testes instrumentados na variante exclusiva validation. O artefato público só aparece após todos esses testes passarem; o artefato candidate-apk-not-validated é interno e não deve ser instalado. Uma pré-release só é publicada após os dois jobs passarem, por `workflow_dispatch` com `publish_test=true` ou tag `test-*`.
+`android.yml` testa a lógica, roda Android Lint, compila os APKs e publica um artefato. Jobs separados instalam e abrem o APK distribuído no Android 15/API 35 e Android 16/API 36, além de executar testes instrumentados na variante exclusiva validation. O artefato público só aparece após todos esses testes passarem; o artefato candidate-apk-not-validated é interno e não deve ser instalado. Uma pré-release só é publicada após todos os jobs de validação passarem, por `workflow_dispatch` com `publish_test=true` ou tag `test-*`.
 
 `release.yml` é manual e exige declaração de teste físico, versão sem sufixo de teste e assinatura válida. Antes de usar, configure o environment **release-production com required reviewers** e os secrets `RELEASE_KEYSTORE_BASE64`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD`. O YAML sozinho não configura aprovadores no GitHub. Proteja main e exija os checks Android. Gere/guarde a chave definitiva fora do repositório, com backup seguro; nunca inclua senhas ou arquivos de chave em commits. Incremente versionCode/versionName ao distribuir atualizações.
 

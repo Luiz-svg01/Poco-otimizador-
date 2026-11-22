@@ -1,4 +1,4 @@
-# Política de privacidade — Poco Optimizer 0.1.0
+# Política de privacidade — Poco Optimizer 0.1.1
 
 O aplicativo opera localmente, sem permissão de internet, anúncios, rastreadores, contas ou telemetria. Não coleta senhas, mensagens ou dados bancários. Não envia hashes, arquivos, lista de apps ou informações do dispositivo a serviços externos.
 

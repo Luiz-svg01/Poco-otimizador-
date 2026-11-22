@@ -16,7 +16,23 @@ Correção do crash de inicialização descrita em [STARTUP_FIX_0_1_1.md](STARTU
 
 ### Emuladores e distribuição
 
-A execução final da CI, os resultados de Android 15/API 35 e Android 16/API 36 e os links de download serão registrados aqui após sua conclusão. A existência deste plano não comprova execução. O APK público só é promovido após as verificações em ambos os emuladores passarem.
+A execução [45040746740](https://github.com/Luiz-svg01/Poco-otimizador-/actions/runs/45040746740) terminou com **sucesso** em todos os jobs (`build`, `device-test (API 35)`, `device-test (API 36)`, `validated-apk`, `publish-test`). Código do aplicativo testado: `1d54534283509a0a5ed17909218e700e878ff7fa`.
+
+| Verificação | Android 15 / API 35 | Android 16 / API 36 |
+| --- | --- | --- |
+| APK exato da distribuição: três aberturas a frio e processo mantido | Passou | Passou |
+| Análise real, navegação por todas as centrais e retorno do segundo plano | Passou | Passou |
+| Quatro testes instrumentados: recriação da Activity, navegação/análise, progresso conhecido/desconhecido e exclusão SAF com hash/cópia preservada | 4 passaram | 4 passaram |
+
+20 testes JVM passaram; lint debug/validation sem erros. Não houve falhas na execução final. A matriz executa quatro testes instrumentados em cada versão (oito execuções), além do teste externo do APK. A versão usa target/compile SDK 35 e foi executada também no Android 16; isso não certifica particularidades do HyperOS 3.
+
+- [Pré-release 0.1.1](https://github.com/Luiz-svg01/Poco-otimizador-/releases/tag/test-45040746740)
+- [APK verificado](https://github.com/Luiz-svg01/Poco-otimizador-/releases/download/test-45040746740/Poco-Optimizer-0.1.1-test.apk)
+- Artefato `Poco-Optimizer-test-apk` na execução acima, criado somente após a matriz passar.
+- SHA-256: `a55e4999b78793955d2cae683082360e5cf8de338c814d774060628726c57de9`
+- APK publicado: 60.140.221 bytes, baixado novamente da URL pública e validado com o checksum, apksigner, auditoria do Manifest/DEX e alinhamento ZIP/ELF de 16 KiB.
+
+Os artefatos `device-test-reports-api-35` e `device-test-reports-api-36` contêm relatórios, XML de resultados, logcat e screenshots. O buffer de crashes da validação final do Android 16 está vazio. Alterações posteriores apenas nesta documentação não modificam o APK validado.
 
 ## Falha anterior (0.1.0)
 
