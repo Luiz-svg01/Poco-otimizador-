@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Non-exported fixture provider for instrumentation; not included in release. -->
+        <provider android:name=".fixtures.FixtureDocumentsProvider"
+            android:authorities="${applicationId}.fixtures" android:exported="false" android:grantUriPermissions="true"/>
+    </application>
+</manifest>
