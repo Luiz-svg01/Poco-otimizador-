@@ -22,6 +22,10 @@ A execução final da CI, os resultados de Android 15/API 35 e Android 16/API 36
 
 A execução [44988335393](https://github.com/Luiz-svg01/Poco-otimizador-/actions/runs/44988335393) passou no build/JVM/lint, mas falhou no job device-test antes de executar os testes instrumentados: processo caiu em DocumentsProvider.attachInfo com “Provider must be exported”. O job de pré-release foi bloqueado. Essa falha foi investigada; não foi tratada como sucesso de testes só porque o APK compilou.
 
+## Iteração de execução que detectou outro crash
+
+[45039745246](https://github.com/Luiz-svg01/Poco-otimizador-/actions/runs/45039745246): build, auditoria e três aberturas a frio passaram em cada emulador. A análise falhou nas APIs 35 e 36 com NullPointerException na leitura adiada de `total!!` pelo progresso Compose. Corrigida com captura de valores imutáveis; teste de regressão adicionado. A promoção do APK e a publicação foram bloqueadas nessa execução.
+
 ## Testes ainda necessários
 
 Validar o novo APK no Poco X6 5G real com Android 16/HyperOS 3, além de provedores/pastas reais, sensores, TalkBack e política de energia Xiaomi. Use TESTING.md. Se continuar fechando, siga COLLECT_CRASH_LOG.md e envie apenas a exceção do processo do Poco Optimizer.

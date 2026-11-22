@@ -7,6 +7,7 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -38,7 +40,11 @@ import kotlinx.coroutines.isActive
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState); enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge(
+            statusBarStyle=SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
+            navigationBarStyle=SystemBarStyle.dark(android.graphics.Color.rgb(8,8,13))
+        )
         setContent { PocoTheme { OptimizerApp() } }
     }
     @Composable private fun OptimizerApp(vm: OptimizerViewModel = viewModel()) {
@@ -71,15 +77,14 @@ class MainActivity : ComponentActivity() {
             NavigationBar {
                 val labels=listOf("Início","Limpeza","Segurança","Desemp.","Ajustes")
                 val icons=listOf(Icons.Outlined.Dashboard,Icons.Outlined.CleaningServices,Icons.Outlined.Security,Icons.Outlined.Speed,Icons.Outlined.Settings)
-                labels.forEachIndexed { i,label -> NavigationBarItem(selected=tab==i,onClick={tab=i},icon={Icon(icons[i],label)},label={Text(label)},alwaysShowLabel=true) }
+                labels.forEachIndexed { i,label -> NavigationBarItem(selected=tab==i,onClick={tab=i},icon={Icon(icons[i],label)},label={Text(label,style=MaterialTheme.typography.labelSmall,maxLines=1,overflow=TextOverflow.Ellipsis)},alwaysShowLabel=true) }
             }
         }) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if(s.busy) Surface(color=MaterialTheme.colorScheme.primaryContainer) {
                     Column(Modifier.fillMaxWidth().padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                         Text(s.progress,style=MaterialTheme.typography.bodyMedium)
-                        if(s.total!=null && s.total!!>0) LinearProgressIndicator(progress={s.done.toFloat()/s.total!!},modifier=Modifier.fillMaxWidth())
-                        else LinearProgressIndicator(modifier=Modifier.fillMaxWidth())
+                        AnalysisProgress(done=s.done,total=s.total,modifier=Modifier.fillMaxWidth())
                         if(!s.deleting) TextButton(onClick=vm::cancel) { Text("Cancelar operação") }
                     }
                 }

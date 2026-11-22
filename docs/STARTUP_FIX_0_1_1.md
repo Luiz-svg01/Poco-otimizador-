@@ -22,6 +22,14 @@ O componente de testes estava em `app/src/debug`, portanto entrava no APK debug 
 - A consulta de concessões de pastas saiu do construtor na thread principal e passou para Dispatchers.IO com tratamento de erros. Uma falha nessa consulta pode ser exibida sem derrubar a inicialização. Isso é proteção adicional, não outra causa comprovada do crash anterior.
 - VersionCode passou para 2 e versionName para 0.1.1-test. Limpeza confirmada, hashes, segurança e desempenho foram preservados. Nenhuma limpeza automática, root ou permissão ampla foi adicionada.
 
+Os screenshots do APK no emulador também mostraram ícones de sistema escuros sobre a interface escura. As barras de sistema agora usam explicitamente o estilo escuro, e os rótulos da navegação evitam quebra no meio da palavra em telas estreitas.
+
+## Segundo crash reproduzido durante a análise
+
+A execução [45039745246](https://github.com/Luiz-svg01/Poco-otimizador-/actions/runs/45039745246) comprovou três aberturas bem-sucedidas do APK distribuído em cada API (35 e 36). Ao tocar em analisar, os dois emuladores reproduziram uma NullPointerException em MainActivity.kt:81, na lambda de LinearProgressIndicator usada pelas semantics do Compose.
+
+A expressão `s.total!!` lia novamente um estado delegado que podia mudar para null entre a composição e a avaliação adiada do indicador. A correção extrai AnalysisProgress, recebe os contadores como parâmetros imutáveis e captura uma fração não nula para aquela composição. Etapas sem total usam o indicador indeterminado, sem inventar percentuais. Um teste instrumentado alterna repetidamente totais conhecidos, zero e desconhecidos e consulta as semantics entre atualizações. A versão candidata que reproduziu essa falha não foi promovida nem publicada.
+
 ## Verificação de compatibilidade
 
 O aplicativo continua compilado com SDK/target 35 e mínimo 28. Android 16/API 36 pode executar apps target 35; não é necessário aumentar targetSdk para corrigir esse crash. A CI testa a execução no Android 15 e 16, incluindo três aberturas a frio, permanência do processo, análise real sem concessões de pastas, todas as centrais e retorno do segundo plano. Esses testes usam exatamente o APK candidato que será distribuído. Separadamente, a variante validation executa testes Compose (incluindo recriação da Activity) e ContentResolver/DocumentsContract.

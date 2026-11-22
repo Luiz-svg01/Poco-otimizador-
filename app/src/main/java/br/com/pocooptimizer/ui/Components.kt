@@ -39,3 +39,11 @@ val Purple = Color(0xFF7C3AED)
         Note(detail)
     }
 }
+
+/** Capture a value for this composition. Material may invoke progress later (draw/semantics),
+ * after the scanner has switched from a known total to an indeterminate stage. */
+@Composable fun AnalysisProgress(done: Int, total: Int?, modifier: Modifier = Modifier) {
+    val fraction = total?.takeIf { it > 0 }?.let { (done.toFloat() / it).coerceIn(0f, 1f) }
+    if (fraction == null) LinearProgressIndicator(modifier=modifier)
+    else LinearProgressIndicator(progress={ fraction },modifier=modifier)
+}
