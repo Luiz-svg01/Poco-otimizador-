@@ -35,7 +35,10 @@ class SafStorage(private val context: Context) : FileAccess {
             return FileEntry(uri, c.getString(1) ?: "Sem nome", known[uri]?.path ?: uri,
                 if (c.isNull(2)) -1 else c.getLong(2), if (c.isNull(3)) 0 else c.getLong(3), c.getString(4) ?: "application/octet-stream",
                 c.getInt(5) and DocumentsContract.Document.FLAG_SUPPORTS_DELETE != 0)
-        } ?: error("Provedor não respondeu à consulta")
+        }
+        // DocumentsProvider converts FileNotFoundException to a null cursor (AOSP).
+        // A null result fails all pre-delete validations. After a successful delete,
+        // it means the provider no longer returns the document; delete's receipt is authoritative.
         null
     } catch (_: java.io.FileNotFoundException) { null } }
     override fun open(uri: String): InputStream = requireNotNull(resolver.openInputStream(Uri.parse(uri))) { "Não foi possível abrir o arquivo" }

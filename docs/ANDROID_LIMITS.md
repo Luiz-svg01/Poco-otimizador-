@@ -16,7 +16,7 @@ A exclusão usa DocumentsContract.deleteDocument sob a concessão do SAF. Sem pe
 
 Uma comparação seguida de delete não é atômica: a API pública SAF não oferece “delete-if-hash-matches”. Outro app/provedor pode mudar o conteúdo no intervalo mínimo entre validação e exclusão. Não edite os arquivos durante a operação; não use provedores não confiáveis. A garantia de manter cópias vale para os grupos conhecidos e o instante de revalidação, não contra mudanças externas posteriores.
 
-O relatório soma o tamanho validado apenas dos arquivos cujo delete retornou sucesso e a consulta posterior confirmou ausência. Isso é volume lógico removido, não aumento garantido de espaço físico (lixeira, compressão, nuvem, gravações concorrentes). Há registro inicial, por arquivo e final. Morte de processo/queda de energia pode ocorrer entre exclusão e registro; um histórico sem fechamento indica resultado incerto, exigindo reanálise. Exclusão já confirmada não é retomada automaticamente após morte do processo.
+O relatório soma o tamanho validado apenas dos arquivos cujo delete retornou sucesso e a consulta posterior não retornou o documento. Isso é volume lógico removido, não aumento garantido de espaço físico (lixeira, compressão, nuvem, gravações concorrentes). Há registro inicial, por arquivo e final. Morte de processo/queda de energia pode ocorrer entre exclusão e registro; um histórico sem fechamento indica resultado incerto, exigindo reanálise. Exclusão já confirmada não é retomada automaticamente após morte do processo.
 
 ## Segurança
 
