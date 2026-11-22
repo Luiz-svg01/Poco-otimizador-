@@ -6,12 +6,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import br.com.pocooptimizer.BuildConfig
 import br.com.pocooptimizer.data.*
 import br.com.pocooptimizer.ui.*
 import br.com.pocooptimizer.utils.*
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable fun SettingsScreen(s: UiState, prefs: Preferences, history: List<History>, change: (Preferences) -> Unit,
     authorize: () -> Unit, revoke: (String) -> Unit, clear: () -> Unit) {
     var confirmClear by remember { mutableStateOf(false) }
@@ -23,11 +26,11 @@ import br.com.pocooptimizer.utils.*
     LazyColumn(contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
         item { Text("Ajustes",style=MaterialTheme.typography.headlineMedium) }
         item { Panel("Preferências da análise") {
-            Row { Switch(checked=prefs.duplicates,onCheckedChange={change(prefs.copy(duplicates=it))},enabled=!s.busy); Text("Calcular duplicatas por SHA-256",modifier=Modifier.padding(12.dp)) }
+            Row { Switch(modifier=Modifier.semantics { contentDescription="Calcular duplicatas por SHA-256" },checked=prefs.duplicates,onCheckedChange={change(prefs.copy(duplicates=it))},enabled=!s.busy); Text("Calcular duplicatas por SHA-256",modifier=Modifier.padding(12.dp)) }
             Text("Arquivo grande: a partir de ${prefs.largeMb} MiB")
-            Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) { listOf(50,100,500).forEach { mb -> FilterChip(selected=prefs.largeMb==mb,onClick={change(prefs.copy(largeMb=mb))},label={Text("$mb MiB")},enabled=!s.busy) } }
+            FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) { listOf(50,100,500).forEach { mb -> FilterChip(selected=prefs.largeMb==mb,onClick={change(prefs.copy(largeMb=mb))},label={Text("$mb MiB")},enabled=!s.busy) } }
             Text("Arquivo antigo: mais de ${prefs.oldDays} dias")
-            Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) { listOf(30,90,180).forEach { days -> FilterChip(selected=prefs.oldDays==days,onClick={change(prefs.copy(oldDays=days))},label={Text("$days dias")},enabled=!s.busy) } }
+            FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) { listOf(30,90,180).forEach { days -> FilterChip(selected=prefs.oldDays==days,onClick={change(prefs.copy(oldDays=days))},label={Text("$days dias")},enabled=!s.busy) } }
             Note("Análises são iniciadas por você. Nenhum serviço permanente ou exclusão agendada.")
         } }
         item { Panel("Pastas autorizadas") {
@@ -43,7 +46,7 @@ import br.com.pocooptimizer.utils.*
             OutlinedButton(onClick={confirmClear=true},enabled=!s.busy) { Text("Limpar dados locais do app") }
         } }
         item { Text("Histórico",style=MaterialTheme.typography.titleLarge)
-            Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) { listOf("Todos","Limpezas","Análises").forEach { name -> FilterChip(selected=historyFilter==name,onClick={historyFilter=name},label={Text(name)}) } }
+            FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) { listOf("Todos","Limpezas","Análises").forEach { name -> FilterChip(selected=historyFilter==name,onClick={historyFilter=name},label={Text(name)}) } }
         }
         val filtered=history.filter { when(historyFilter) { "Limpezas" -> it.kind in setOf("Limpeza","Limpeza iniciada","Arquivo"); "Análises" -> it.kind in setOf("Análise","Arquivo analisado"); else -> true } }
         if(filtered.isEmpty()) item { Note("Nenhum registro neste filtro") }

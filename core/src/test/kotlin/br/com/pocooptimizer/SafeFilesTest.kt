@@ -89,6 +89,20 @@ class SafeFilesTest {
         try { SafeFiles(access).prepare(StorageReport(listOf(file)),setOf("x"),100); fail("must reject size") }
         catch(_:IllegalArgumentException) {}
     }
+    @Test fun revokedAccessDoesNotDeleteOrCountBytes() = runBlocking {
+        val file=FileEntry("x","x","x",3,0,"text/plain",true)
+        var revoked=false
+        val access=object: FileAccess {
+            override fun stat(uri:String):FileEntry { if(revoked) throw SecurityException("revoked"); return file }
+            override fun open(uri:String)=ByteArrayInputStream("abc".toByteArray())
+            override fun delete(uri:String):Boolean { fail("Must not delete"); return false }
+        }
+        val safe=SafeFiles(access)
+        val plan=safe.prepare(StorageReport(listOf(file)),setOf("x"),100)
+        revoked=true
+        val result=safe.execute(plan,101)
+        assertEquals(0L,result.bytes); assertEquals(0,result.deleted)
+    }
     @Test fun failedProviderDoesNotInventRecoveredSpace() = withDisk { a ->
         File(a.root,"a").writeText("abc")
         val plan=SafeFiles(a).prepare(report(a),setOf(a.entry("a").uri),100)

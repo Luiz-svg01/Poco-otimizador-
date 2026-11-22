@@ -6,12 +6,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import br.com.pocooptimizer.data.Preferences
 import br.com.pocooptimizer.domain.*
 import br.com.pocooptimizer.ui.*
 import br.com.pocooptimizer.utils.*
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable fun CleanerScreen(s: UiState, prefs: Preferences, authorize: () -> Unit, scan: () -> Unit, select: (String) -> Unit, prepare: () -> Unit) {
     var filter by remember { mutableStateOf("Revisar") }
     val report=s.storage
@@ -40,7 +43,7 @@ import br.com.pocooptimizer.utils.*
             item { Panel("Resultado nas áreas autorizadas") {
                 Text("${report.files.size} arquivos • ${report.duplicates.size} grupos idênticos")
                 Note("Duplicatas: mesmo tamanho e SHA-256. Mantenha pelo menos uma cópia; grupos podem estar incompletos fora das áreas autorizadas.")
-                Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                     listOf("Revisar","Duplicatas","Todos").forEach { name -> FilterChip(selected=filter==name,onClick={filter=name},label={Text(name)}) }
                 }
                 val count=s.selected.size
@@ -62,7 +65,7 @@ import br.com.pocooptimizer.utils.*
                         if(group.files.size>6) Note("Veja as demais cópias no filtro Duplicatas.")
                     }
                     Row {
-                        Checkbox(checked=f.uri in s.selected,onCheckedChange={select(f.uri)},enabled=!s.busy && f.canDelete && f.size>=0)
+                        Checkbox(modifier=Modifier.semantics { contentDescription="Selecionar ${f.name}, ${f.path}" },checked=f.uri in s.selected,onCheckedChange={select(f.uri)},enabled=!s.busy && f.canDelete && f.size>=0)
                         Text(if(f.canDelete && f.size>=0) "Selecionar para revisão" else "Exclusão indisponível neste provedor",modifier=Modifier.padding(top=12.dp))
                     }
                 }
